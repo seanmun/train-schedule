@@ -1,0 +1,24 @@
+#train-table th {
+    display: inline-block;
+    width: 20%;
+  }
+
+  #train-table td {
+    display: inline-block;
+    width: 20%;
+  }
+
+ 
+
+  @media only screen and (max-width: 500px) {
+    h1 {
+        font-size: 30px !important;
+    }
+    #train-table th {
+        font-size: 12px !important;
+      }
+    
+      #train-table td {
+        font-size: 10px !important;
+      }
+  }

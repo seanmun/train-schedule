@@ -1,13 +1,6 @@
-// Steps to complete:
 
-// 1. Initialize Firebase
-// 2. Create button for adding new employees - then update the html + update the database
-// 3. Create a way to retrieve employees from the employee database.
-// 4. Create a way to calculate the months worked. Using difference between start and current time.
-//    Then use moment.js formatting to set difference in months.
-// 5. Calculate Total billed
 
-// 1. Initialize Firebase
+// My Firebase
 var config = {
   apiKey: "AIzaSyAgxHfawTBvJUxcGXOEw2RpNVsxcqkp1A8",
   authDomain: "moneyneversleeps-b2982.firebaseapp.com",
@@ -16,23 +9,26 @@ var config = {
   storageBucket: "moneyneversleeps-b2982.appspot.com",
   messagingSenderId: "996762236644"
 };
-
+// Initialize 
 firebase.initializeApp(config);
 
+// Create shorthand var
 var database = firebase.database();
 
-// 2. Button for adding Employees
+// on click button
 $("#add-train").on("click", function(event) {
   event.preventDefault();
 
-  // Grabs user input
+  // Place user entered data into variable
   var trainName = $("#train-name-input").val().trim();
   var trainDes = $("#destination-input").val().trim();
   var trainFirst = moment($("#first-input").val().trim(), "HH:mm").format("HH:mm");
   var trainFreq = $("#freq-input").val().trim();
   var currentTime = moment();
+
+  // capture current time for math later on
 	console.log("Current: " +  moment(currentTime).format("HH:mm"));
-  // Creates local "temporary" object for holding employee data
+  // map js var to firebase fields
   var newTrain = {
     name: trainName,
     destination: trainDes,
@@ -40,17 +36,16 @@ $("#add-train").on("click", function(event) {
     frequency: trainFreq
   };
 
-  // Uploads employee data to the database
+  // firebasee push
   database.ref().push(newTrain);
 
-  //Logs everything to console
-  console.log(newTrain.name);
-  console.log(newTrain.destination);
-  console.log(newTrain.first);
-  console.log(newTrain.frequency);
+  // //check logs
+  // console.log(newTrain.name);
+  // console.log(newTrain.destination);
+  // console.log(newTrain.first);
+  // console.log(newTrain.frequency);
 
-
-  // Clears all of the text-boxes
+  // Clears data
   $("#train-name-input").val("");
   $("#destination-input").val("");
   $("#first-input").val("");
@@ -58,41 +53,35 @@ $("#add-train").on("click", function(event) {
 
 });
 
-// Create Firebase event for adding employee to the database and a row in the html when a user adds an entry
+// Push data from firebase to web page IDs
 database.ref().on("child_added", function(childSnapshot) {
   console.log(childSnapshot.val());
-
-  // Store everything into a variable.
   var trainName = childSnapshot.val().name;
   var trainDes = childSnapshot.val().destination;
   var trainFirst = childSnapshot.val().first;
   var trainFreq = childSnapshot.val().frequency;
 
-    // console.log(trainName);
-    // console.log(trainDes);
-    // console.log(trainFirst);
-    // console.log(trainFreq);
-
+    // convert time to something readable
     var trainFirstPretty = moment(trainFirst, "HH:mm");
     console.log("first train: " + trainFirstPretty);
     
     //calculate difference between times
-		var difference =  moment().diff(moment(trainFirstPretty),"minutes");
-    console.log("Difference " + difference);
+		var diff =  moment().diff(moment(trainFirstPretty),"minutes");
+    console.log("Difference " + diff);
     
-    //time apart(remainder)
-		var trainRemain = difference % trainFreq;
-    console.log("trainRemian: " + trainRemain);
+    //ti
+		var trainRemain = diff % trainFreq;
+    console.log("trainRemain: " + trainRemain);
     
-    //minutes until arrival
+    //calculate minutes until next train
 		var minAway = trainFreq - trainRemain;
     console.log("Min Away " + minAway);
     
     //next arrival time
-		var nextArrival = moment().add(minAway, "minutes").format('HH:mm');
-    console.log("Next " + nextArrival);
+		var nextArrival = moment().add(minAway, "minutes").format('hh:mm');
+    console.log("Next: " + nextArrival);
 
-  // Create the new row
+  // Push data to new table row on webpage
   var newEntry = $("<tr>").append(
     $("<td>").text(trainName),
     $("<td>").text(trainDes),
@@ -100,15 +89,6 @@ database.ref().on("child_added", function(childSnapshot) {
     $("<td>").text(nextArrival),
     $("<td>").text(minAway)
   );
-
-//   // Append the new row to the table
+  // Append row
   $("#train-table > tbody").append(newEntry);
 });
-
-// Example Time Math
-// -----------------------------------------------------------------------------
-// Assume Employee start date of January 1, 2015
-// Assume current date is March 1, 2016
-
-// We know that this is 15 months.
-// Now we will create code in moment.js to confirm that any attempt we use meets this test case
