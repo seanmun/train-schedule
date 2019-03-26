@@ -78,7 +78,7 @@ database.ref().on("child_added", function(childSnapshot) {
     console.log("Min Away " + minAway);
     
     //next arrival time
-		var nextArrival = moment().add(minAway, "minutes").format('hh:mm');
+		var nextArrival = moment().add(minAway, "minutes").format('hh:mm A');
     console.log("Next: " + nextArrival);
 
   // Push data to new table row on webpage
